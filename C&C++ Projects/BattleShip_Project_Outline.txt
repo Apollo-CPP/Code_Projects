@@ -1,0 +1,15 @@
+As I am learning how my new programming language, C++, as I try to major in Computer Science in College or Video Game Development, I am trying to create a battleship game as my first game project.
+
+The game should start off by an introduction, randomize the amount of ships and their positions on the answer grid and have the variables: hits, turns_left, and misses. Make a while loop that runs asks for the player to input the Row and Column every time and checks if the inputted a number. If they hit a ship then increment Hit by 1 else increment Misses by 1. However, if they already guessed a coordinate, do not deduct a turn but leave it alone and give the player a second chance. Always remind the player on how much turns they have left. Of course there should be a win condition if they destroy every ship so the game can end. Speaking of the end, at the end of the game, it should display their end game stats of Hits and Misses.
+
+----------------------------- Input Rules -----------------------------
+1. Your input CANNOT be anything else other than a number. No alphabets or Symbols, etc. ONLY a number.
+2. Your input CANNOT be empty.
+3. Your input CANNOT just have spaces.
+4. Your input can ONLY be within the range of 0 - 3 with 0 being the first Row / Column because C++ tables started with the index of  zero.
+5. Your input can ONLY be one character MAXIMUM in length.
+-----------------------------------------------------------------------
+
+Make a function to check the player's input to validate their input accordingly to the rules.
+Make two separate tables for the ships and the user guessed coordinates so the player doesn't guess coordinates twice and lose a turn for that
+Once finished, optimize everything so the code doesn't look messy or unorganized
