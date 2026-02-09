@@ -101,3 +101,83 @@ for element in np.nditer(Slicing_Loop_Array[1::2, ::2]):
     print(element, end=" ")
     
 print()
+
+# We can also enumerate through Numpy arrays using the ndenumerate() function
+
+for i, element in np.ndenumerate(Three_Dimensional_Array):
+    print(f"{element} at index {i}")
+
+Number_Array = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+
+for i, element in np.ndenumerate(Number_Array):
+    print(f"{element} at {i}")
+
+# You can also join Numpy Arrays
+
+Yeetus = np.array([1, 2, 3, 4, 5])
+Woah = np.array([6, 7, 8, 9, 10])
+
+Woah = np.concatenate((Yeetus, Woah))
+print(Woah)
+
+Two_Dimensional_Array = np.array([
+    [1, 2, 3, 4, 5],
+    [6, 7, 8, 9, 10]
+])
+
+Another_Two_Dimensional_Array = np.array([
+    [11, 12, 13, 14, 15], 
+    [16, 17, 18, 19, 20]
+])
+
+print("----- Concatenate Axis 0 -----")
+Concatenated_Array = np.concatenate((Two_Dimensional_Array, Another_Two_Dimensional_Array), axis=0)
+print(Concatenated_Array)
+print("--------------------")
+
+print("----- Concatenate Axis 1 -----")
+Concatenated_Array = np.concatenate((Two_Dimensional_Array, Another_Two_Dimensional_Array), axis=1)
+print(Concatenated_Array)
+print("--------------------")
+
+Me_Stack = np.array([1, 2, 3])
+Me_Also_Stack = np.array([4, 5, 6])
+Me_Stack_Three = np.array([7, 8, 9])
+
+print("----- Stacked Axis 0 -----")
+Stacked_Array = np.stack((Me_Stack, Me_Also_Stack, Me_Stack_Three)) # Stacks arrays starting from the first array to the last array, axis=0 is default
+print(Stacked_Array)
+print("--------------------")
+
+print("----- Stacked Axis 1 -----")
+Stacked_Array = np.stack((Me_Stack, Me_Also_Stack, Me_Stack_Three), axis=1) # Stacks arrays VERTICALLY
+print(Stacked_Array)
+print("--------------------")
+
+print("----- Horizontal Stack -----")
+Horizontally_Stacked_Array = np.hstack((Me_Stack, Me_Also_Stack, Me_Stack_Three)) # Returns a list of all elements horizontally
+print(Horizontally_Stacked_Array)
+print("--------------------")
+
+print("----- Vertical Stack -----")
+Vertically_Stacked_Array = np.vstack((Me_Stack, Me_Also_Stack, Me_Stack_Three)) # Equivalent to np.stack()
+print(Vertically_Stacked_Array)
+print("--------------------")
+
+print("----- Depth Stacked -----")
+Depth_Stacked_Array = np.dstack((Me_Stack, Me_Also_Stack, Me_Stack_Three)) # Equivalent to Stacked Axis 1 or np.stack() with axis=1? (I don't know it looks like it added another dimension?)
+print(Depth_Stacked_Array)
+print("--------------------")
+
+print("----- Splitting Array -----")
+Even_More_Number_Array = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+Split_Array = np.array_split(Even_More_Number_Array, 3) # Split an array into the amount of arrays that you want
+print(Split_Array)
+print(Split_Array[0]) # Gets the first array of the many splitted arrays
+
+More_Two_Dimensional_Array = np.array([[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]])
+Split_Two_Dimensions = np.array_split(More_Two_Dimensional_Array, 2, axis=0) # Normal split
+print(Split_Two_Dimensions)
+
+Split_Two_Dimensions = np.array_split(More_Two_Dimensional_Array, 2, axis=1) # Split corresponding elements in each array with the same index into columns
+print(Split_Two_Dimensions)
