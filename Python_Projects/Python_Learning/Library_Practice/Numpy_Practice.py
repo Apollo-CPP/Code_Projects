@@ -169,15 +169,20 @@ Depth_Stacked_Array = np.dstack((Me_Stack, Me_Also_Stack, Me_Stack_Three)) # Equ
 print(Depth_Stacked_Array)
 print("--------------------")
 
-print("----- Splitting Array -----")
+print("----- Normal Array Splitting -----")
 Even_More_Number_Array = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 Split_Array = np.array_split(Even_More_Number_Array, 3) # Split an array into the amount of arrays that you want
 print(Split_Array)
 print(Split_Array[0]) # Gets the first array of the many splitted arrays
+print("--------------------")
 
+print("----- 2D Array Splitting Axis = 0 -----")
 More_Two_Dimensional_Array = np.array([[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]])
 Split_Two_Dimensions = np.array_split(More_Two_Dimensional_Array, 2, axis=0) # Normal split
 print(Split_Two_Dimensions)
+print("--------------------")
 
+print("----- 2D Array Splitting Axis = 1")
 Split_Two_Dimensions = np.array_split(More_Two_Dimensional_Array, 2, axis=1) # Split corresponding elements in each array with the same index into columns
 print(Split_Two_Dimensions)
+print("--------------------")
