@@ -301,6 +301,8 @@ while True:
 
     if Player_Mode == "PLAYER":
         while True:
+            
+            print("Player One's Turn!")
             Get_Player_Choice(Player_Marker, Player_Mode)
 
             Game_Status_Check_1 = Check_For_Win_and_Tie(Player_Mode)
@@ -308,6 +310,7 @@ while True:
             if Game_Status_Check_1 == True or Game_Status_Check_1 == False:
                 break
 
+            print("Player Two's Turn!")
             Get_Player_Choice(Opponent_Marker, Player_Mode)
 
             Game_Status_Check_2 = Check_For_Win_and_Tie(Player_Mode)
