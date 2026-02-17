@@ -58,3 +58,11 @@ Divisor_Array = np.array([6, 3, 9, 2])
 
 Remainder_Array = np.remainder(Dividend_Array, Divisor_Array)
 print(Remainder_Array)
+
+# Or if you want both the quotient and the remainder then you can use the np.divmod() function
+print(np.divmod(Dividend_Array, Divisor_Array))
+# First array are the quotients and the second array are the remainders with corresponding indexes
+
+# If you want the absolute values of an array then you can use the np.absolute() function
+Random_Numbers_Array = np.array([-1, 6, -100, 37, -7])
+print(np.absolute(Random_Numbers_Array))
