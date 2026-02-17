@@ -186,3 +186,73 @@ print("----- 2D Array Splitting Axis = 1")
 Split_Two_Dimensions = np.array_split(More_Two_Dimensional_Array, 2, axis=1) # Split corresponding elements in each array with the same index into columns
 print(Split_Two_Dimensions)
 print("--------------------")
+
+print("----- Horizontal Split -----")
+Split_Two_Dimensions = np.hsplit(More_Two_Dimensional_Array, 2) # Equivalent to normal splitting with axis=1
+print(Split_Two_Dimensions)
+print("--------------------")
+
+print("----- Vertical Splitting -----")
+Split_Two_Dimensions = np.vsplit(More_Two_Dimensional_Array, 2) # Equivalent to normal splitting with axis=0
+print(Split_Two_Dimensions)
+print("--------------------")
+
+print("----- Searching in Numpy Arrays -----")
+Random_Idk_Array = np.array([1, "yeet", True, "hmm", False, 56, "meh"])
+print(np.where(Random_Idk_Array == "hmm")) # The np.where() function returns a Numpy array with the index of the value
+print("--------------------")
+
+print("----- Finding an even number by searching -----")
+yeah_lot_numbers = np.array([56, 2, 8, 3, 78, 45, 213, 784])
+print(np.where(yeah_lot_numbers % 2 == 0)) # Find equally divisible numbers - Even
+print(np.where(yeah_lot_numbers % 2 == 1)) # Find all odd numbers
+print("--------------------")
+
+print("----- Searching through sorted arrays? -----")
+actually_sorted = np.array([10, 15, 20, 25, 30, 35, 40])
+not_sorted = np.array([5, 16, 8, 45, 23, 56, 89, 45, 7, 2, 8, 1])
+
+# The np.searchsorted() function will assume that the array is ALREADY sorted and will return the index of the value you passed in to search. It will return the index where Numpy would insert it to maintain the sorted order.
+print(np.searchsorted(actually_sorted, 15))
+print(np.searchsorted(not_sorted, 45))
+print(np.searchsorted(actually_sorted, 66)) # 7 - Numpy will put this value at index 7 to maintain the sorted order.
+
+print(np.searchsorted(actually_sorted, 25, side="right")) # Optional parameter, side, this will basically tell Numpy to start sorting from a certain direction which is left or right
+# I think right starts with 1 but left (default) starts with 0?
+
+More_Numbers = np.array([1, 3, 5, 7])
+print(np.searchsorted(More_Numbers, [2, 4, 6, 9])) # Will return a table of indexes on each corresponding number on where Numpy will insert these values to maintain the sorted order
+print("--------------------")
+
+print("----- Sorting Arrays -----")
+Random_Numbers_Array = np.array([456, 568, 213, 768, 345, 556, 258, 484, 732])
+Sorted_Array = np.sort(Random_Numbers_Array)
+print(Sorted_Array)
+
+Sort_This_Two_Dimensional_Array = np.array([ # Literally sorts every element in the array
+    [346, 873, 388, 897, 324],
+    [765, 567, 245, 787, 432]
+])
+
+Sorted_Two_Dimensional_Array = np.sort(Sort_This_Two_Dimensional_Array)
+print(Sorted_Two_Dimensional_Array)
+print("--------------------")
+
+print("----- Filtering Arrays -----")
+More_Arrays = np.array([5, 3, 9, 10, 58, 2])
+This_idk_bool_array = np.array([True, True, False, True, False, False])
+
+Filtered_Array = More_Arrays[This_idk_bool_array] # Filters the array by corresponding the values between the two arrays. The values that correspond with True will be included in the filtered array else excluded.
+
+A_Filtered_List: list[int] = []
+
+for element in np.nditer(More_Arrays): # You can also hard code the filtering instead because it's based on conditions
+    if element % 2 == 0:
+        A_Filtered_List.append(True)
+    else:
+        A_Filtered_List.append(False)
+
+New_Array = More_Arrays[A_Filtered_List]
+print(A_Filtered_List)
+print(New_Array)
+print("--------------------")
