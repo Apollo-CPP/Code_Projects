@@ -103,3 +103,43 @@ import math
 # You can also log with any base but since NumPy doesn't have that available, you can use the np.frompyfunc() with the math.log() function
 nplog = np.frompyfunc(math.log, 2, 1)
 print(nplog(Ranged_Numbers, 4)) # Log but with base 4
+
+# Even more arithmatic NumPy functions
+Lot_of_Numbers = np.arange(1, (10) + 1) # 1 - 10
+Even_More_Numbers = np.arange(11, (20) + 1) # 11 - 20
+
+# As we know the np.add() function adds every value with the corresponding index
+print(np.add(Lot_of_Numbers, Even_More_Numbers))
+
+# However, there is also an np.sum() function that adds every value in the array together
+print(np.sum([Lot_of_Numbers, Even_More_Numbers])) # Adds every number from 1 to 20 (210)
+print(np.sum([Lot_of_Numbers, Even_More_Numbers], axis=1)) # Adds every number from each array. First is numbers from 1 - 10 and then second is 11 - 20
+
+# If you want the find the cumulative sum then you can use the np.cumsum() function
+print(np.cumsum(Lot_of_Numbers)) # Finds the cumulative sum of numbers from 1 - 10
+# Visualization: [1, 2, 3, 4, 5]
+# This function basically keeps adding the previous number to the next number until the end
+# First number is 1 because it is the starting number but the second number is 3 because it adds the first number (1) to the next number (2). This keeps repeating until the end
+
+# NumPy Products
+
+# If you want the product of an array then use np.prod()
+print(np.prod(Lot_of_Numbers)) # Multiples every element just like np.add()
+# 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10 = 3628800
+
+# If you want the cumulative product then use np.cumprod()
+print(np.cumprod(Lot_of_Numbers))
+
+# Numpy Differences
+# Differences work a little bit different than Numpy Addition
+
+ok_lot_of_numbers = np.array([3, 8, 13, 25])
+
+print(np.diff(ok_lot_of_numbers))
+# It still goes through the elements one by one but except the value next subtracts them
+# First element is 8 - 3, second is 13 - 8, and third and last is 25 - 13
+
+print(np.diff(ok_lot_of_numbers, n=2))
+# You can have the optional parameter, n, which is basically how many times you want to repeat it
+# Currently you have [5, 5, 12] after the first difference but we do it again because n is 2.
+# 5 - 5 = 0 and 12 - 5 = 7 - Leaving you with the final result of [0, 7]
