@@ -143,3 +143,63 @@ print(np.diff(ok_lot_of_numbers, n=2))
 # You can have the optional parameter, n, which is basically how many times you want to repeat it
 # Currently you have [5, 5, 12] after the first difference but we do it again because n is 2.
 # 5 - 5 = 0 and 12 - 5 = 7 - Leaving you with the final result of [0, 7]
+
+# LCM (Lowest Common Multiple)
+
+Random_Number_1 = 6
+Random_Number_2 = 9
+
+# Just finds the lowest common multiple between the two numbers
+print(np.lcm(Random_Number_1, Random_Number_2))
+
+LCM_Array = np.array([3, 7, 2]) # Find the lowest common multiple between all value
+print(np.lcm.reduce(LCM_Array))
+
+Another_Ranged_Array = np.arange(1, (10) + 1)
+print(np.lcm.reduce(Another_Ranged_Array))
+
+# GCD (Greatest Common Divisor) or HCF (Highest Common Factor)
+
+Another_Number = 6
+Also_Another_Random_Number = 8
+
+print(np.gcd(Another_Number, Also_Another_Random_Number))
+# The highest number that is able to divide both 8 and 6 is 2
+
+GCD_Array = np.array([20, 8, 16, 32])
+print(np.gcd.reduce(GCD_Array)) # 4 - The highest number that is able to be divided within all numbers in the array
+
+# Some trigonometry with NumPy
+
+print(np.pi) # Equivalent to math.pi
+
+# sin(), cos(), and tan() function
+
+# SOH, CAH, TOA
+# Sin - Opposite over Hypotenuse
+# Cos - Adjacent over Hypotenuse
+# Tan - Opposite over Adjacent
+
+print(np.sin(3/5))
+print(np.cos(4/5))
+print(np.tan(3/4))
+
+Pi_Division_Array = np.array([np.pi, np.pi/2, np.pi/3, np.pi/4])
+print(np.sin(Pi_Division_Array))
+
+# Use np.deg2rad() function to convert degree values to radians
+Degrees_Arary = np.array([90, 180, 270, 360])
+print(np.deg2rad(Degrees_Arary))
+
+# But if you want to convert radians to degrees then you can use the np.rad2deg() function instead
+Random_Radians_Array = np.array([5.32385, 3.8953, 10.347592, 4.6848929])
+print(np.rad2deg(Random_Radians_Array))
+
+Some_Values = np.array([1, -1, 0.1])
+print(np.arcsin(Some_Values))
+
+Side_A = 3
+Side_B = 4
+
+# Use the np.hypot() function to find the hypotenuse of a right triangle
+print(np.hypot(Side_A, Side_B)) # Returns a float
