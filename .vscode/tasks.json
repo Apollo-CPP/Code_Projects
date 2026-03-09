@@ -6,12 +6,12 @@
             "command": "C:/msys64/ucrt64/bin/g++.exe",
             "args": [
                 "-std=c++23",
+                "-lstdc++exp",
                 "-fdiagnostics-color=always",
                 "-g",
                 "${file}",
                 "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe",
-                "-lstdc++exp"
+                "${fileDirname}\\${fileBasenameNoExtension}.exe"
             ],
             "options": {
                 "cwd": "C:/msys64/ucrt64/bin"

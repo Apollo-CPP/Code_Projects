@@ -60,3 +60,42 @@ print("--------------------")
 Value_Counts = np.unique(My_RNG_Array, return_counts=True)
 print(Value_Counts) # Returns the amount of occurences a value has
 print("--------------------")
+
+# Transposing and reshaping arrays
+
+Transposing_Array = np.array([[1, 2, 3, 4, 5], [6, 7, 8, 9, 10]])
+# Reshapes to 5 rows and 2 columns
+print(Transposing_Array.reshape(5, 2)) # Reshaping basically changes the dimensions of the array, it needs to multiply up to the amount of elements in the array
+
+# Rearranges the array's axes or shape. 5 rows and 2 columns becomes 2 rows and 5 columns
+print(Transposing_Array.reshape(5, 2).transpose())
+print(Transposing_Array.reshape(5, 2).T) # Numpy also provides the attribute or property T for a numpy array, which basically shows the transposed version of the array
+
+# Reversing arrays
+
+Reverse_Me_Array = np.arange(1, (10) + 1)
+Two_Dimensional_Reverse_Me_Array = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+
+# We can use the np.flip() function ro reverse Numpy arrays
+print(np.flip(Reverse_Me_Array)) # Reverses all elements
+
+# Reverses the order of the lists and the elements in those lists
+print(np.flip(Two_Dimensional_Reverse_Me_Array))
+
+# Axis=0 only reverses the order of the lists (vertical)
+print(np.flip(Two_Dimensional_Reverse_Me_Array, axis=0))
+
+# Axis=1 only reverses the elements inside of the lists of the NumPy Array
+print(np.flip(Two_Dimensional_Reverse_Me_Array, axis=1))
+
+# "Flattening" arrays (Converting arrays back to 1 dimensional arrays)
+
+Random_2D_Array = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+
+# Use the flatten() function to convert an array back to 1D
+print(Random_2D_Array.flatten())
+
+# You can also use the ravel() function to do this as well
+print(Random_2D_Array.ravel())
+
+# The difference between flatten() and ravel() is that flatten creates a copy of the array but ravel() creates a view of the array
