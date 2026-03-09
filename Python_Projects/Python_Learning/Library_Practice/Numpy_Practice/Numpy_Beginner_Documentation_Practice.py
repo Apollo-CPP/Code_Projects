@@ -13,7 +13,7 @@ Expanded_Columns = Lot_of_Numbers[np.newaxis, :]
 print(Expanded_Columns)
 
 # If you want to add more rows then slice at the front and np.newaxis at the end
-Expanded_Rows = Lot_of_Numbers[:,  np.newaxis]
+Expanded_Rows = Lot_of_Numbers[:, np.newaxis]
 print(Expanded_Rows)
 
 # Alternative Way: np.expand_dims()
@@ -88,6 +88,12 @@ print(np.flip(Two_Dimensional_Reverse_Me_Array, axis=0))
 # Axis=1 only reverses the elements inside of the lists of the NumPy Array
 print(np.flip(Two_Dimensional_Reverse_Me_Array, axis=1))
 
+# You can reverse a row
+print(np.flip(Two_Dimensional_Reverse_Me_Array[1])) # Reverses the second row
+
+# You can reverse columns (Example: Elements at column 1)
+print(np.flip(Two_Dimensional_Reverse_Me_Array[:, 1]))
+
 # "Flattening" arrays (Converting arrays back to 1 dimensional arrays)
 
 Random_2D_Array = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
@@ -99,3 +105,13 @@ print(Random_2D_Array.flatten())
 print(Random_2D_Array.ravel())
 
 # The difference between flatten() and ravel() is that flatten creates a copy of the array but ravel() creates a view of the array
+
+# You can use matplotlib to work with Numpy to graph
+import matplotlib.pyplot as plt
+
+Another_RNG = np.random.default_rng() # Make an RNG instance
+Even_More_Random_Numbers = Another_RNG.integers(1, (100) + 1, size=(100)) # Generate an array containing INTEGERS (not floats) with 100 random numbers ranging from 1 - 100
+print(Even_More_Random_Numbers)
+
+plt.plot(Even_More_Random_Numbers) # Plot the graph
+plt.show() # Show the graph
