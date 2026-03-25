@@ -12,7 +12,7 @@ print("A random number has been generated from 1 - 100, guess the number correct
 print("There will also be hints for you to guess lower or higher to help you guess the  number")
 print("You can also input QUIT (and variants) to quit the game")
 
-def Convert_Player_Guess_To_Int(User_Input):
+def Convert_Player_Guess_To_Int(User_Input: str):
 
     try:
         Converted_Guss = int(User_Input)
@@ -26,7 +26,7 @@ def Convert_Player_Guess_To_Int(User_Input):
         print("Type Error hit!")
         return False
 
-def Check_Guess_In_Range(Player_Guess):
+def Check_Guess_In_Range(Player_Guess: int):
 
     if Player_Guess < Min or Player_Guess > Max:
         print("Your guess is out of range (1 - 100)!")
@@ -34,7 +34,7 @@ def Check_Guess_In_Range(Player_Guess):
     
     return True
 
-def Give_Player_Hint(Player_Guess):
+def Give_Player_Hint(Player_Guess: int):
 
     if Player_Guess < Random_Number and Player_Guess > Min:
         print("Guess Higher!")
