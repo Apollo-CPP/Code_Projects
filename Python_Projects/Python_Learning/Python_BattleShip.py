@@ -41,10 +41,10 @@ class Board:
                     continue
 
                 try:
-                    if 0 <= int(Ship_Row) <= self.Number_of_Rows:
+                    if 0 <= int(Ship_Row) <= (self.Number_of_Rows - 1): # -1 to subtract 1 because indexing starts at 0.
                         break
                     else:
-                        print(f"You can only place your ships between Rows 0 and {self.Number_of_Rows}.")
+                        print(f"You can only place your ships between Rows 0 and {self.Number_of_Rows - 1}.")
                 except ValueError:
                     print("Invalid Input.")
 
@@ -56,10 +56,10 @@ class Board:
                     continue
 
                 try:
-                    if 0 <= int(Ship_Column) <= self.Number_of_Columns:
+                    if 0 <= int(Ship_Column) <= (self.Number_of_Columns - 1):
                         break
                     else:
-                        print(f"You can only place your ships between Columns 0 and {self.Number_of_Columns}.")
+                        print(f"You can only place your ships between Columns 0 and {self.Number_of_Columns - 1}.")
                 except ValueError:
                     print("Invalid Input.")
 
@@ -104,52 +104,50 @@ class Board:
     #     }
     # Originally created this function to keep track of all ships located in real time but thought it over and just why not just show all ship locations instead?
 
-    def Retrieve_Board_Symbol(self, Row_Index: int, Column_Index: int, Enemy_Ship_Locations: set[tuple[int, int]], Show_Answer: bool) -> str:
+    def Retrieve_Board_Symbol(self, Row_Index: int, Column_Index: int, Enemy_Guessed_Coordinates: dict[tuple[int, int], bool], Show_Answer: bool) -> str:
         Coordinates: tuple[int, int] = (Row_Index, Column_Index)
         # I know there's a lot of nesting but I hope I can improve this later
 
         if Show_Answer == True:
-            
-            if not self.Guessed_Coordinates.get(Coordinates): # Player did not guess these coordinates
-                
-                if Coordinates not in Enemy_Ship_Locations: # The coordinates that the player did not guess was not a ship. Return the "~" sign
+
+            if not Enemy_Guessed_Coordinates.get(Coordinates): # The opponent did not guess the coordinates
+
+                if Coordinates not in self.__Ship_Locations: # The opponent did not guess the coordinates but it was also not a ship
                     return "~"
-                else:
-                    return "!" # The coordinates that the player did not guess was a ship. Return the "!" sign
-            else:
-                if Coordinates not in Enemy_Ship_Locations: # The player did guess the coordinates but it was not a ship. Return the "O" sign
+                else: # The opponent did not guess the coordinates and there was a ship
+                    return "!"
+            else: # The opponent did guess the coordinates
+
+                if Coordinates not in self.__Ship_Locations: # The opponent did guess the coordinates but it wasn't a ship
                     return "O"
-                else: # The player did guess the coordinates and it was a ship. Return the "X" sign
+                else: # The opponent did guess the coordinates and it was a ship
                     return "X"
                 
         else:
-            if not self.Guessed_Coordinates.get(Coordinates):
+            if not Enemy_Guessed_Coordinates.get(Coordinates): # The opponent did not guess the coordinates
                 return "~"
-        
-            if Coordinates not in Enemy_Ship_Locations:
+            
+            if Coordinates not in self.__Ship_Locations: # The opponent did guess the coordinates but it was not a ship
                 return "O"
-            else:
+            else: # The opponent did guess the coordinates and it was a ship
                 return "X"
         
-    def Print_Ship_Board(self, Ship_Locations: set[tuple[int, int]], Show_Answer: bool) -> None:
+    def Print_Ship_Board(self, Enemy_Guessed_Coordinates: dict[tuple[int, int], bool], Show_Answer: bool) -> None:
         # print(*(Column_Number for Column_Number in range(len(self.Ship_Board[0]))), sep=" ") # AI Usage No. 2 - I was confused on how to print the elements using a comprehension but while also separating them with a space
         # Apparently all I had to do was just to unpackage it using the * sign
         # Later thought about it and changed it to the version below for readability
 
+        print("  ", end="") # Formatting purposes
         for Column in range(self.Number_of_Columns):
-            print(Column, end=" ")
+            print(f"{Column} ", end="") # Space in between for formatting purposes
         print()
 
-        if Show_Answer == True:
-            for i in range(self.Number_of_Rows):
-                for j in range(self.Number_of_Columns):
-                    print(self.Retrieve_Board_Symbol(i, j, Ship_Locations, Show_Answer=True), end=" ")
-                print()
-        else:
-            for i in range(self.Number_of_Rows):
-                for j in range(self.Number_of_Columns):
-                    print(self.Retrieve_Board_Symbol(i, j, Ship_Locations, Show_Answer=False), end=" ")
-                print()
+        for i in range(self.Number_of_Rows):
+            print(i, end=" ") # Space for formatting purposes
+
+            for j in range(self.Number_of_Columns):
+                print(self.Retrieve_Board_Symbol(i, j, Enemy_Guessed_Coordinates, Show_Answer), end=" ")
+            print()
 
     def Computer_Self_Play(self, Player_Board: Board) -> None: # Hey! This is only used when the Game mode is computer so that the computer can generate a random coordinate
         Empty_Spots = {
@@ -212,18 +210,18 @@ def Get_Player_Input(Ship_Board: Board) -> tuple[int, int]: # I put it able to r
     while True:
         Row = input("Choose a Row: ")
 
-        if Validate_Player_Input(Row, 0, Ship_Board.Number_of_Rows) == True: # I put 0 because it is not at the very beginning where you choose the amount of rows and columns you want and so that when you play, the player can properly guess without causing issues
+        if Validate_Player_Input(Row, Ship_Board.Number_of_Rows) == True:
             break
 
     while True:
         Column = input("Choose a Column: ")
 
-        if Validate_Player_Input(Column, 0, Ship_Board.Number_of_Columns) == True:
+        if Validate_Player_Input(Column, Ship_Board.Number_of_Columns) == True:
             break
 
     return (int(Row), int(Column))
 
-def Validate_Player_Input(Player_Input: str, Min_Limit: int, Max_Limit: int): # AI usage No. 1, Max_Limit parameter suggestion.
+def Validate_Player_Input(Player_Input: str, Number_of_Rows_or_Columns: int): # AI usage No. 1, Max_Limit parameter suggestion.
     # The problem was that if the amount of rows and columns were different then I can't tell what the maximum number was that the input could take
     # I could've just added a parameter of Max_Limit and was ashamed as this was a simple and easy solution
 
@@ -234,7 +232,7 @@ def Validate_Player_Input(Player_Input: str, Min_Limit: int, Max_Limit: int): # 
     try:
         Converted_Player_Input = int(Player_Input)
         
-        if (Min_Limit <= Converted_Player_Input <= Max_Limit) == False:
+        if (0 <= Converted_Player_Input <= (Number_of_Rows_or_Columns - 1)) == False: # I put a -1 to subtract 1 because it is for indexing and indexing starts at 0. If I pass in the int 5 for 5 rows, the max index would be 4.
             print("Your input for rows or columns is out of bounds!")
             return False
         else:
@@ -282,16 +280,38 @@ def Display_End_Game_Stats() -> None:
 
 def Prompt_Player_for_Rows_and_Columns() -> tuple[int, int]:
     while True:
-        Rows = input("How many Rows do you want: ")
+        Rows = input("How many Rows do you want: ").strip()
 
-        if Validate_Player_Input(Rows, Game_Configuration["Minimum Rows and Columns"], Game_Configuration["Maximum Rows and Columns"]) == True:
-            break
+        if not Rows or Rows.isalpha() or not Rows.isdecimal():
+            print("Invalid Input.")
+            continue
+
+        try:
+            Rows_Integer = int(Rows)
+        
+            if (Game_Configuration["Minimum Rows and Columns"] <= Rows_Integer <= Game_Configuration["Maximum Rows and Columns"]) == False:
+                print(f"Your rows need to be between {Game_Configuration["Minimum Rows and Columns"]} and {Game_Configuration["Maximum Rows and Columns"]}.")
+            else:
+                break
+        except ValueError:
+            print("Invalid Input!")
 
     while True:
-        Columns = input("How many Columns do you want: ")
+        Columns = input("How many Columns do you want: ").strip()
 
-        if Validate_Player_Input(Columns, Game_Configuration["Minimum Rows and Columns"], Game_Configuration["Maximum Rows and Columns"]) == True:
-            break
+        if not Columns or Columns.isalpha() or not Columns.isdecimal():
+            print("Invalid Input.")
+            continue
+
+        try:
+            Columns_Integer = int(Columns)
+        
+            if (Game_Configuration["Minimum Rows and Columns"] <= Columns_Integer <= Game_Configuration["Maximum Rows and Columns"]) == False:
+                print(f"Your columns need to be between {Game_Configuration["Minimum Rows and Columns"]} and {Game_Configuration["Maximum Rows and Columns"]}.")
+            else:
+                break
+        except ValueError:
+            print("Invalid Input!")
 
     return (int(Rows), int(Columns))
 
@@ -345,7 +365,7 @@ def Play_BattleShip():
                 Game_State["Player One Score"] += 1
                 break
 
-            Player_Two.Print_Ship_Board(Player_Two.Get_Ship_Locations(), Show_Answer=False)
+            Player_Two.Print_Ship_Board(Player_One.Guessed_Coordinates, Show_Answer=False)
             Game_State["Current Turn"] = 2 # Now just pass the turn to the opponent
 
             while True:
@@ -359,7 +379,7 @@ def Play_BattleShip():
                 Game_State["Player Two Score"] += 1
                 break
 
-            Player_One.Print_Ship_Board(Player_One.Get_Ship_Locations(), Show_Answer=False)
+            Player_One.Print_Ship_Board(Player_Two.Guessed_Coordinates, Show_Answer=False)
             Game_State["Current Turn"] = 1
 
     elif Game_Mode == "computer":
@@ -382,7 +402,7 @@ def Play_BattleShip():
                 Game_State["Player One Score"] += 1
                 break
 
-            Computer.Print_Ship_Board(Computer.Get_Ship_Locations(), Show_Answer=False)
+            Computer.Print_Ship_Board(Player.Guessed_Coordinates, Show_Answer=False)
             Game_State["Current Turn"] = 2
 
             Computer.Computer_Self_Play(Player)
@@ -392,7 +412,7 @@ def Play_BattleShip():
                 Game_State["Player Two Score"] += 1
                 break
 
-            Player.Print_Ship_Board(Player.Get_Ship_Locations(), Show_Answer=False)
+            Player.Print_Ship_Board(Computer.Guessed_Coordinates, Show_Answer=False)
             Game_State["Current Turn"] = 1
 
     if Prompt_User_to_Play_Again() == True:
