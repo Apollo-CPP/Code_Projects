@@ -37,34 +37,16 @@ class Board:
         while self.Numbers_of_Ships < Game_Configuration["Max Ships"]:
 
             while True:
-                Ship_Row = input(f"Ship {self.Numbers_of_Ships + 1} Row: ").strip() # I put a + 1 to start at 1. You can't start with Ship 0
+                Ship_Row = input(f"Ship {self.Numbers_of_Ships + 1} Row: ").strip() # I have to put a + 1 because you can't start with Ship 0.
 
-                if not Ship_Row or Ship_Row.isalpha() or not Ship_Row.isdecimal():
-                    print("Invalid Input.")
-                    continue
-
-                try:
-                    if 0 <= int(Ship_Row) <= (self.Number_of_Rows - 1): # -1 to subtract 1 because indexing starts at 0.
-                        break
-                    else:
-                        print(f"You can only place your ships between Rows 0 and {self.Number_of_Rows - 1}.")
-                except ValueError:
-                    print("Invalid Input.")
+                if Validate_Player_Input(Ship_Row, 0, Game_Configuration["Maximum Rows and Columns"]) == True: # Check if the input is less than or greater than 0 and less than 10
+                    break
 
             while True:
                 Ship_Column = input(f"Ship {self.Numbers_of_Ships + 1} Column: ").strip()
 
-                if not Ship_Column or Ship_Column.isalpha() or not Ship_Column.isdecimal():
-                    print("Invalid Input.")
-                    continue
-
-                try:
-                    if 0 <= int(Ship_Column) <= (self.Number_of_Columns - 1):
-                        break
-                    else:
-                        print(f"You can only place your ships between Columns 0 and {self.Number_of_Columns - 1}.")
-                except ValueError:
-                    print("Invalid Input.")
+                if Validate_Player_Input(Ship_Column, 0, Game_Configuration["Maximum Rows and Columns"]) == True:
+                    break
 
             if (int(Ship_Row), int(Ship_Column)) in self.__Ship_Locations:
                 print(f"Couldn't place Ship {self.Numbers_of_Ships + 1} in Row {Ship_Row} and Column {Ship_Column} because there is already a ship placed there!")
@@ -191,7 +173,7 @@ def Display_Introduction_and_Instructions() -> None:
 
     print("----- RULES FOR INPUTTING -----")
     print("1. Your input has to be an INTEGER, or a WHOLE NUMBER. No spaces, special characters, or literally just an empty input.")
-    print("2. Your input needs to be within the range of 0 - (Ship Row or Ship Column depending on which input you're putting in for) MINUS 1 because tables start at the index of 0 instead of 1")
+    print("2. Your input needs to be within the range of 0 - (Ship Row or Ship Column depending on which input you're putting in for) MINUS 1 because tables start at the index of 0 instead of 1.")
 
     print("----- SHIP BOARD KEYS -----")
     print("~ = Unknown (Possible Ship).")
@@ -214,18 +196,18 @@ def Get_Player_Input(Ship_Board: Board) -> tuple[int, int]: # I put it able to r
     while True:
         Row = input("Choose a Row: ")
 
-        if Validate_Player_Input(Row, Ship_Board.Number_of_Rows) == True:
+        if Validate_Player_Input(Row, 0, Ship_Board.Number_of_Rows) == True:
             break
 
     while True:
         Column = input("Choose a Column: ")
 
-        if Validate_Player_Input(Column, Ship_Board.Number_of_Columns) == True:
+        if Validate_Player_Input(Column, 0, Ship_Board.Number_of_Columns) == True:
             break
 
     return (int(Row), int(Column))
 
-def Validate_Player_Input(Player_Input: str, Number_of_Rows_or_Columns: int): # AI usage No. 1, Max_Limit parameter suggestion.
+def Validate_Player_Input(Player_Input: str, Min_Limit: int, Max_Limit: int): # AI usage No. 1, Max_Limit parameter suggestion.
     # The problem was that if the amount of rows and columns were different then I can't tell what the maximum number was that the input could take
     # I could've just added a parameter of Max_Limit and was ashamed as this was a simple and easy solution
 
@@ -236,7 +218,7 @@ def Validate_Player_Input(Player_Input: str, Number_of_Rows_or_Columns: int): # 
     try:
         Converted_Player_Input = int(Player_Input)
         
-        if (0 <= Converted_Player_Input <= (Number_of_Rows_or_Columns - 1)) == False: # I put a -1 to subtract 1 because it is for indexing and indexing starts at 0. If I pass in the int 5 for 5 rows, the max index would be 4.
+        if (Min_Limit <= Converted_Player_Input < Max_Limit) == False: # I put a -1 to subtract 1 because it is for indexing and indexing starts at 0. If I pass in the int 5 for 5 rows, the max index would be 4.
             print("Your input for rows or columns is out of bounds!")
             return False
         else:
@@ -286,36 +268,14 @@ def Prompt_Player_for_Rows_and_Columns() -> tuple[int, int]:
     while True:
         Rows = input("How many Rows do you want: ").strip()
 
-        if not Rows or Rows.isalpha() or not Rows.isdecimal():
-            print("Invalid Input.")
-            continue
-
-        try:
-            Rows_Integer = int(Rows)
-        
-            if (Game_Configuration["Minimum Rows and Columns"] <= Rows_Integer <= Game_Configuration["Maximum Rows and Columns"]) == False:
-                print(f"Your rows need to be between {Game_Configuration["Minimum Rows and Columns"]} and {Game_Configuration["Maximum Rows and Columns"]}.")
-            else:
-                break
-        except ValueError:
-            print("Invalid Input!")
+        if Validate_Player_Input(Rows, Game_Configuration["Minimum Rows and Columns"], (Game_Configuration["Maximum Rows and Columns"] + 1)) == True: # Had to put a + 1 here because the Validate_Player_Input() function does not include the Max_Limit number
+            break
 
     while True:
         Columns = input("How many Columns do you want: ").strip()
 
-        if not Columns or Columns.isalpha() or not Columns.isdecimal():
-            print("Invalid Input.")
-            continue
-
-        try:
-            Columns_Integer = int(Columns)
-        
-            if (Game_Configuration["Minimum Rows and Columns"] <= Columns_Integer <= Game_Configuration["Maximum Rows and Columns"]) == False:
-                print(f"Your columns need to be between {Game_Configuration["Minimum Rows and Columns"]} and {Game_Configuration["Maximum Rows and Columns"]}.")
-            else:
-                break
-        except ValueError:
-            print("Invalid Input!")
+        if Validate_Player_Input(Columns, Game_Configuration["Minimum Rows and Columns"], (Game_Configuration["Maximum Rows and Columns"] + 1)) == True: # Same thing here too
+            break
 
     return (int(Rows), int(Columns))
 
