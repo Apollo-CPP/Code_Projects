@@ -63,6 +63,7 @@ class Board:
 
         self.__Ship_Locations = set(random.sample(tuple(All_Coordinates), Game_Configuration["Max Ships"])) # AI Usage No. 6. I literally forgot about the random.sample() function. I could've replaced my entire RNG Ship Generation with that one line alone.
         # random.sample() is basically random.choice() but it returns UNIQUE choices with the amount of times you want. (How did I forget about this function??)
+        self.Numbers_of_Ships = len(self.__Ship_Locations)
 
         for Coordinate in self.__Ship_Locations:
             print(f"Row: {Coordinate[0]}, Column: {Coordinate[1]}") # Debugging Purposes
