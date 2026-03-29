@@ -5,10 +5,7 @@
 
 import random
 
-Game_Configuration: dict[str, int] = {
-    "Random_Ship_Chance": 300,
-    "Ship_Spawn_Chance": 50,
-    
+Game_Configuration: dict[str, int] = {    
     "Minimum Rows and Columns": 5,
     "Maximum Rows and Columns": 10,
     "Max Ships": 10
@@ -26,7 +23,7 @@ class Board:
         self.__Ship_Locations: set[tuple[int, int]] = set() # I set this to a private variable because it's literally the answers
         # self.Ship_Board: list[list[bool | None]] = [[None for _ in range(Amount_of_Columns)] for _ in range(Amount_of_Rows)] # Sets up new board with x elements (columns) and y rows
         # Realized I didn't even need the Ship_Board list at all. Rarely even used.
-        self.Guessed_Coordinates: set[tuple[int, int]] = set() # Created a set just to hold guessed coordinates
+        self.Guessed_Coordinates: dict[tuple[int, int], bool] = dict() # Reverted it back to a dictionary for more efficient checking for the function Retrieve_Board_Symbol()
         # Implemented to prevent double guessing and wasting a turn but also for efficiently retrieving the Board symbols (~ for unknown, X for hit, and O for miss)
         self.Number_of_Rows: int = Amount_of_Rows
         self.Number_of_Columns: int = Amount_of_Columns
@@ -39,13 +36,13 @@ class Board:
             while True:
                 Ship_Row = input(f"Ship {self.Numbers_of_Ships + 1} Row: ").strip() # I have to put a + 1 because you can't start with Ship 0.
 
-                if Validate_Player_Input(Ship_Row, 0, Game_Configuration["Maximum Rows and Columns"]) == True: # Check if the input is less than or greater than 0 and less than 10
+                if Validate_Player_Input(Ship_Row, 0, self.Number_of_Rows) == True: # Check if the input is less than or greater than 0 and less than 10
                     break
 
             while True:
                 Ship_Column = input(f"Ship {self.Numbers_of_Ships + 1} Column: ").strip()
 
-                if Validate_Player_Input(Ship_Column, 0, Game_Configuration["Maximum Rows and Columns"]) == True:
+                if Validate_Player_Input(Ship_Column, 0, self.Number_of_Columns) == True:
                     break
 
             if (int(Ship_Row), int(Ship_Column)) in self.__Ship_Locations:
@@ -57,24 +54,18 @@ class Board:
 
 
     def Generate_Ships(self) -> None: # Updated - This is now for the computer only. There's a new function that will allow players to place their ships
-        for i in range(self.Number_of_Rows):
-            for j in range(self.Number_of_Columns):
+        All_Coordinates = {
+            (Row_Index, Column_Index)
 
-                if self.Numbers_of_Ships >= Game_Configuration["Max Ships"]:
-                    break
+            for Row_Index in range(self.Number_of_Rows)
+            for Column_Index in range(self.Number_of_Columns)
+        }
 
-                Random_Chance: int = random.randint(0, Game_Configuration["Random_Ship_Chance"]) # Random Number from 0 to 300 (I put 300 for better probability and randomness)
+        self.__Ship_Locations = set(random.sample(tuple(All_Coordinates), Game_Configuration["Max Ships"])) # AI Usage No. 6. I literally forgot about the random.sample() function. I could've replaced my entire RNG Ship Generation with that one line alone.
+        # random.sample() is basically random.choice() but it returns UNIQUE choices with the amount of times you want. (How did I forget about this function??)
 
-                if Random_Chance <= Game_Configuration["Ship_Spawn_Chance"]: # Just check if the Random Chance is less than or equal to 50
-                    self.__Ship_Locations.add((i, j))
-                    self.Numbers_of_Ships += 1
-                    print(f"Row: {i}, Column: {j}") # Debugging Purposes
-
-        print("--------------------")
-
-        if self.Numbers_of_Ships <= 0:
-            print("Failed to generate ships for a board. Generating Ships Again...")
-            self.Generate_Ships() # Recursion >:-D
+        for Coordinate in self.__Ship_Locations:
+            print(f"Row: {Coordinate[0]}, Column: {Coordinate[1]}") # Debugging Purposes
 
     def Get_Ship_Locations(self) -> set[tuple[int, int]]: # Simple Get Method for returning the private variable (Ship Locations)
         return self.__Ship_Locations
@@ -89,40 +80,28 @@ class Board:
     #     }
     # Originally created this function to keep track of all ships located in real time but thought it over and just why not just show all ship locations instead?
 
-    def Retrieve_Board_Symbol(self, Row_Index: int, Column_Index: int, Enemy_Guessed_Coordinates: set[tuple[int, int]], Show_Answer: bool) -> str:
-        Coordinates: tuple[int, int] = (Row_Index, Column_Index)
+    def Retrieve_Board_Symbol(self, Coordinates: tuple[int, int], Enemy_Guessed_Coordinates: dict[tuple[int, int], bool], Show_Answer: bool) -> str:
+        Check_If_Enemy_Guessed_The_Coordinates = Enemy_Guessed_Coordinates.get(Coordinates)
 
         if Show_Answer == True:
 
-            if not Coordinates in Enemy_Guessed_Coordinates: # I tried using if not Enemy_Guessed_A_Ship but it didn't work so I just checked if it was equal to None
-                # None just means that the Enemy did not guess the Coordinates
-
-                if not Coordinates in self.__Ship_Locations:
-                    return "~"
-                else:
-                    return "!"
-                
-            else:
-                if not Coordinates in self.__Ship_Locations:
-                    return "O"
-                else:
-                    return "X"
-                
-        else:
-            if not Coordinates in Enemy_Guessed_Coordinates:
-                return "~"
+            if Check_If_Enemy_Guessed_The_Coordinates == None: # The opponent did not guess the coordinates
+                return "!" if (Coordinates in self.__Ship_Locations) == True else "~" # Return "!" if the Coordinates was a ship, return "~" if it was not a ship
+            else: # The opponent did guess the coordinates
+                return "X" if Check_If_Enemy_Guessed_The_Coordinates == True else "O" # Return "X" if the Coordinates was a ship, return "O" if it was not a ship
             
-            if not Coordinates in self.__Ship_Locations:
-                return "O"
-            else:
-                return "X"
+        else:
+            if Check_If_Enemy_Guessed_The_Coordinates == None: # The opponent did not guess the coordinates so just return "~"
+                return "~"
+            else: # The opponent did guess the coordinates
+                return "X" if Check_If_Enemy_Guessed_The_Coordinates == True else "O" # Return "X" if it was a ship, return "O" if it was not a ship
 
-    def Print_Ship_Board(self, Enemy_Guessed_Coordinates: set[tuple[int, int]], Show_Answer: bool) -> None:
+    def Print_Ship_Board(self, Enemy_Guessed_Coordinates: dict[tuple[int, int], bool], Show_Answer: bool) -> None:
         # print(*(Column_Number for Column_Number in range(len(self.Ship_Board[0]))), sep=" ") # AI Usage No. 2 - I was confused on how to print the elements using a comprehension but while also separating them with a space
         # Apparently all I had to do was just to unpackage it using the * sign
         # Later thought about it and changed it to the version below for readability
 
-        print(f"----- {self.Player_Name_PlaceHolder} -----") # Place Holder name so that when ship boards are printed, the players will not get confused
+        print(f"----- {self.Player_Name_PlaceHolder}'s Board -----") # Place Holder name so that when ship boards are printed, the players will not get confused
         print("  ", end="") # Formatting purposes
         for Column in range(self.Number_of_Columns):
             print(f"{Column} ", end="") # Space in between for formatting purposes
@@ -132,7 +111,7 @@ class Board:
             print(i, end=" ") # Space for formatting purposes
 
             for j in range(self.Number_of_Columns):
-                print(self.Retrieve_Board_Symbol(i, j, Enemy_Guessed_Coordinates, Show_Answer), end=" ")
+                print(self.Retrieve_Board_Symbol((i, j), Enemy_Guessed_Coordinates, Show_Answer), end=" ")
             print()
 
     def Computer_Self_Play(self, Player_Board: Board) -> None: # Hey! This is only used when the Game mode is computer so that the computer can generate a random coordinate
@@ -151,10 +130,10 @@ class Board:
         
         if Random_Coordinate not in Player_Board.Get_Ship_Locations():
             print(f"Computer has chosen Row: {Random_Coordinate[0]} and Column: {Random_Coordinate[1]}. Computer has missed.")
-            self.Guessed_Coordinates.add(Random_Coordinate)
+            self.Guessed_Coordinates.update({Random_Coordinate: False})
         else:
             print(f"Computer has chosen Row: {Random_Coordinate[0]} and Column: {Random_Coordinate[1]}. Computer has hit a ship!")
-            self.Guessed_Coordinates.add(Random_Coordinate)
+            self.Guessed_Coordinates.update({Random_Coordinate: True})
 
 
 def Display_Introduction_and_Instructions() -> None:
@@ -235,10 +214,10 @@ def Handle_Player_Input(Guessed_Coordinates: tuple[int, int], Player_Ship_Board:
         return False
 
     if not Guessed_Coordinates in Enemy_Ship_Board.Get_Ship_Locations(): # Check if the guessed coordinates matches with an enemy ship
-        Player_Ship_Board.Guessed_Coordinates.add(Guessed_Coordinates)
+        Player_Ship_Board.Guessed_Coordinates.update({Guessed_Coordinates: False})
         print(f"Row: {Guessed_Coordinates[0]} and Column: {Guessed_Coordinates[1]}. Miss.")
     else:
-        Player_Ship_Board.Guessed_Coordinates.add(Guessed_Coordinates)
+        Player_Ship_Board.Guessed_Coordinates.update({Guessed_Coordinates: True})
         Enemy_Ship_Board.Numbers_of_Ships -= 1
         print(f"Row: {Guessed_Coordinates[0]} and Column: {Guessed_Coordinates[1]}. Hit!")
 
@@ -255,11 +234,8 @@ def Get_Gamemode() -> str:
 
 def Display_End_Game_Stats() -> None:
     print("--------------------")
-
-    print(f"Player One Total Hits: {Game_State["Player One Total Hits"]}")
-    print(f"Player Two Total Hits: {Game_State["Player Two Total Hits"]}")
+    
     print(f"Final Score: {Game_State["Player One Score"]} - {Game_State["Player Two Score"]}")
-
     print("Thank You for playing BattleShip! (Python)")
 
     print("--------------------")
@@ -341,7 +317,7 @@ def Play_BattleShip():
 
             while True:
                 Player_Two_Coordinates = Get_Player_Input(Player_Two)
-                if Handle_Player_Input(Player_Two_Coordinates, Player_One, Player_Two) == True:
+                if Handle_Player_Input(Player_Two_Coordinates, Player_Two, Player_One) == True:
                     break
 
             Win_Check = Check_for_Winner(Player_Two, Player_One)
