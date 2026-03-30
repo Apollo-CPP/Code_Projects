@@ -135,6 +135,7 @@ class Board:
         else:
             print(f"Computer has chosen Row: {Random_Coordinate[0]} and Column: {Random_Coordinate[1]}. Computer has hit a ship!")
             self.Guessed_Coordinates.update({Random_Coordinate: True})
+            Player_Board.Numbers_of_Ships -= 1
 
 
 def Display_Introduction_and_Instructions() -> None:
