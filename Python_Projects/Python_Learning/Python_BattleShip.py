@@ -2,6 +2,9 @@
 # There are also repeated code for validation
 # Also MANY if statements, especially in the Retrieve_Board_Symbol() function, where there are nested if statements
 # I apologize in advance if you try to read my code
+# I also had to use AI for some parts (documented usages) and especially for restructuring the Board into the Player and Computer class. I didn't learn about private variables so I was confused for a bit and forgot how the super() function worked
+# In this BattleShip Project, I tried to use what I learned about Object Oriented Programming (Player and Computer class with inheritance and private variables with getter and setter methods) and data structures (sets adnd dictionaries) for efficient and quick look up times (Big O Complexity of O(1))
+# I also tried to add many comments to document most of the changes and the number of AI usages and the reasoning for it
 
 import random
 
@@ -282,7 +285,11 @@ def Check_for_Winner(Possible_Winner_Ship_Board: Player | Computer, Enemy_Ship_B
             print("Player Two has won!")
             Game_State["Player Two Score"] += 1
 
+        # Reveal the answers here after a player or computer has won
+        # Line 290 prints the winner's ship board and reveals the ship locations (Symbol = ! if the opponent did not guess a coordinate and that coordinate was a ship)
         Possible_Winner_Ship_Board.Print_Ship_Board(Enemy_Ship_Board.Guessed_Coordinates, Enemy_Ship_Board.Name_Place_Holder, Show_Answer=True)
+        # Line 292 does the same thing but prints the opponent's board instead
+        Enemy_Ship_Board.Print_Ship_Board(Possible_Winner_Ship_Board.Guessed_Coordinates, Possible_Winner_Ship_Board.Name_Place_Holder, Show_Answer=True)
         
         print(f"Current Score: {Game_State["Player One Score"]} - {Game_State["Player Two Score"]}")
         
@@ -374,7 +381,7 @@ def Play_BattleShip():
             Game_State["Current Turn"] = 1
 
     if Prompt_User_to_Play_Again() == True:
-        Play_BattleShip()
+        Play_BattleShip() # Recursion >:-D
     else:
         Display_End_Game_Stats()
 
