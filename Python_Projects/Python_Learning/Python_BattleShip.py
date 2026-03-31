@@ -166,12 +166,7 @@ class Computer(Board):
 def Display_Introduction_and_Instructions() -> None:
     print("Welcome to BattleShip! (Python Version)")
     print("Your goal here is to destroy all of the enemy ships before they destroy you.")
-    print("There will be 8 ships that will be hidden on your side and your opponent's side")
-
-    """
-    I don't know how to make it so that the player can know where their ships are and the other player (or computer) knows where their ships also are without them cheating because the game is ran on one device
-    So, I had  to put that statement there on line 48
-    """
+    print(f"There will be {Game_Configuration["Max Ships"]} ships that will be hidden on your side and your opponent's side")
 
     print("You will be asked to input the Row and Column that you want to fire at")
     print("If you hit a ship, congratulations, that's -1 ship for the enemy and a hit for you. However if you miss, just hope that the opponent doesn't destroy one of your ships.")
@@ -185,14 +180,7 @@ def Display_Introduction_and_Instructions() -> None:
     print("~ = Unknown (Possible Ship).")
     print("X = Hit, nice you hit a ship!")
     print("O = Miss, better luck next time.")
-    print("! (Only shown at the end of the game or by quitting or restarting) = Revealed Ship")
-
-    print("----- SPECIAL INPUTS -----")
-    print("MENU - Opens up the Menu")
-    print("QUIT (Needs to be in the Menu) - Stop and Exit the game and confirm your choice")
-    print("RESTART (Needs to be in the Menu) - Restarts the game and also requires confirmation")
-    print("CONTINUE (Needs to be in the Menu) - Simply continues the game")
-    print("NUKE (Needs to be in Menu and requires 5 ships destroyed) - Destroy everything in a 3 mile radius of the coordinate (including the coordinate).", end="\n")
+    print("! (Only shown at the end of the game) = Revealed Ship")
 
     print("Objective: Destroy your enemy ships before they destroy you. Good luck.")
     print("----------------------------------------")
@@ -282,7 +270,7 @@ def Prompt_Player_for_Rows_and_Columns() -> tuple[int, int]:
 
     return (int(Rows), int(Columns))
 
-def Check_for_Winner(Player_Ship_Board: Player, Enemy_Ship_Board: Player | Computer) -> bool | None:
+def Check_for_Winner(Possible_Winner_Ship_Board: Player | Computer, Enemy_Ship_Board: Player | Computer) -> bool | None:
     if Enemy_Ship_Board.Numbers_of_Ships <= 0: # Check if the opponent has 0 ships
 
         # The player that has the current turn will win (before the turn switches to the opponent)
@@ -294,7 +282,7 @@ def Check_for_Winner(Player_Ship_Board: Player, Enemy_Ship_Board: Player | Compu
             print("Player Two has won!")
             Game_State["Player Two Score"] += 1
 
-        Player_Ship_Board.Print_Ship_Board(Enemy_Ship_Board.Guessed_Coordinates, Enemy_Ship_Board.Name_Place_Holder, Show_Answer=True)
+        Possible_Winner_Ship_Board.Print_Ship_Board(Enemy_Ship_Board.Guessed_Coordinates, Enemy_Ship_Board.Name_Place_Holder, Show_Answer=True)
         
         print(f"Current Score: {Game_State["Player One Score"]} - {Game_State["Player Two Score"]}")
         
@@ -377,7 +365,7 @@ def Play_BattleShip():
             Game_State["Current Turn"] = 2
 
             Bot.Computer_Self_Play(Human)
-            Win_Check = Check_for_Winner(Human, Bot)
+            Win_Check = Check_for_Winner(Bot, Human)
 
             if Win_Check == True:
                 break
