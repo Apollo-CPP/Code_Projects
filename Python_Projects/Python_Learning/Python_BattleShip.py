@@ -19,7 +19,7 @@ Game_State: dict[str, int] = {
 }
 
 class Board:
-    def __init__(self, Amount_of_Rows: int, Amount_of_Columns: int, Player_Name: str):
+    def __init__(self, Amount_of_Rows: int, Amount_of_Columns: int):
         self.__Ship_Locations: set[tuple[int, int]] = set() # I set this to a private variable because it's literally the answers
         # self.Ship_Board: list[list[bool | None]] = [[None for _ in range(Amount_of_Columns)] for _ in range(Amount_of_Rows)] # Sets up new board with x elements (columns) and y rows
         # Realized I didn't even need the Ship_Board list at all. Rarely even used.
@@ -28,48 +28,22 @@ class Board:
         self.Number_of_Rows: int = Amount_of_Rows
         self.Number_of_Columns: int = Amount_of_Columns
         self.Numbers_of_Ships: int = 0
-        self.Player_Name_PlaceHolder = Player_Name # Used for distinguishing the different boards when printed so the players do not get confused on which boards are theirs
-
-    def Place_Ships(self) -> None:
-        while self.Numbers_of_Ships < Game_Configuration["Max Ships"]:
-
-            while True:
-                Ship_Row = input(f"Ship {self.Numbers_of_Ships + 1} Row: ").strip() # I have to put a + 1 because you can't start with Ship 0.
-
-                if Validate_Player_Input(Ship_Row, 0, self.Number_of_Rows) == True: # Check if the input is less than or greater than 0 and less than 10
-                    break
-
-            while True:
-                Ship_Column = input(f"Ship {self.Numbers_of_Ships + 1} Column: ").strip()
-
-                if Validate_Player_Input(Ship_Column, 0, self.Number_of_Columns) == True:
-                    break
-
-            if (int(Ship_Row), int(Ship_Column)) in self.__Ship_Locations:
-                print(f"Couldn't place Ship {self.Numbers_of_Ships + 1} in Row {Ship_Row} and Column {Ship_Column} because there is already a ship placed there!")
-                continue
-
-            self.__Ship_Locations.add((int(Ship_Row), int(Ship_Column)))
-            self.Numbers_of_Ships += 1
-
-
-    def Generate_Ships(self) -> None: # Updated - This is now for the computer only. There's a new function that will allow players to place their ships
-        All_Coordinates = {
-            (Row_Index, Column_Index)
-
-            for Row_Index in range(self.Number_of_Rows)
-            for Column_Index in range(self.Number_of_Columns)
-        }
-
-        self.__Ship_Locations = set(random.sample(tuple(All_Coordinates), Game_Configuration["Max Ships"])) # AI Usage No. 6. I literally forgot about the random.sample() function. I could've replaced my entire RNG Ship Generation with that one line alone.
-        # random.sample() is basically random.choice() but it returns UNIQUE choices with the amount of times you want. (How did I forget about this function??)
-        self.Numbers_of_Ships = len(self.__Ship_Locations)
-
-        for Coordinate in self.__Ship_Locations:
-            print(f"Row: {Coordinate[0]}, Column: {Coordinate[1]}") # Debugging Purposes
+        # self.Player_Name_PlaceHolder = Player_Name # Used for distinguishing the different boards when printed so the players do not get confused on which boards are theirs
+        # Removed self._Player_Name_PlaceHolder and created child classes (Player and Computer) that will have their own respective names
 
     def Get_Ship_Locations(self) -> set[tuple[int, int]]: # Simple Get Method for returning the private variable (Ship Locations)
         return self.__Ship_Locations
+    
+    # Set_Ship_Locations is meant for the Computer only since it generates all ships at random at once
+    def Set_Ship_Locations(self, New_Ship_Locations: set[tuple[int, int]]) -> None: # New function to add all Ship Locations for the computer since Ship_Locations is a private variable
+        self.__Ship_Locations = New_Ship_Locations
+
+    # Add_Ship is meant for the player only
+    def Add_Ship(self, Ship_Coordinates: tuple[int, int]) -> None: # New function to add a ship
+        self.__Ship_Locations.add(Ship_Coordinates)
+
+    def Remove_Ship(self, Ship_Coordinates: tuple[int, int]) -> None: # New function to remove a ship
+        self.__Ship_Locations.remove(Ship_Coordinates)
     
     # def Update_Ship_Locations(self) -> None: # Returns the indices (coordinates) of where the ships are
     #     self.__Ship_Locations = {
@@ -97,12 +71,12 @@ class Board:
             else: # The opponent did guess the coordinates
                 return "X" if Check_If_Enemy_Guessed_The_Coordinates == True else "O" # Return "X" if it was a ship, return "O" if it was not a ship
 
-    def Print_Ship_Board(self, Enemy_Guessed_Coordinates: dict[tuple[int, int], bool], Show_Answer: bool) -> None:
+    def Print_Ship_Board(self, Enemy_Guessed_Coordinates: dict[tuple[int, int], bool], Board_Name: str, Show_Answer: bool) -> None:
         # print(*(Column_Number for Column_Number in range(len(self.Ship_Board[0]))), sep=" ") # AI Usage No. 2 - I was confused on how to print the elements using a comprehension but while also separating them with a space
         # Apparently all I had to do was just to unpackage it using the * sign
         # Later thought about it and changed it to the version below for readability
 
-        print(f"----- {self.Player_Name_PlaceHolder}'s Board -----") # Place Holder name so that when ship boards are printed, the players will not get confused
+        print(f"----- {Board_Name}'s Board -----") # Place Holder name so that when ship boards are printed, the players will not get confused
         print("  ", end="") # Formatting purposes
         for Column in range(self.Number_of_Columns):
             print(f"{Column} ", end="") # Space in between for formatting purposes
@@ -115,7 +89,59 @@ class Board:
                 print(self.Retrieve_Board_Symbol((i, j), Enemy_Guessed_Coordinates, Show_Answer), end=" ")
             print()
 
-    def Computer_Self_Play(self, Player_Board: Board) -> None: # Hey! This is only used when the Game mode is computer so that the computer can generate a random coordinate
+class Player(Board):
+    Name_Place_Holder: str = "Player"
+
+    def __init__(self, Amount_of_Rows: int, Amount_of_Columns: int):
+        super().__init__(Amount_of_Rows, Amount_of_Columns)
+
+    def Place_Ships(self) -> None:
+        while self.Numbers_of_Ships < Game_Configuration["Max Ships"]:
+
+            while True:
+                Ship_Row = input(f"Ship {self.Numbers_of_Ships + 1} Row: ").strip() # I have to put a + 1 because you can't start with Ship 0.
+
+                if Validate_Player_Input(Ship_Row, 0, self.Number_of_Rows) == True: # Check if the input is less than or greater than 0 and less than 10
+                    break
+
+            while True:
+                Ship_Column = input(f"Ship {self.Numbers_of_Ships + 1} Column: ").strip()
+
+                if Validate_Player_Input(Ship_Column, 0, self.Number_of_Columns) == True:
+                    break
+
+            Ship_Locations = self.Get_Ship_Locations()
+
+            if (int(Ship_Row), int(Ship_Column)) in Ship_Locations:
+                print(f"Couldn't place Ship {self.Numbers_of_Ships + 1} in Row {Ship_Row} and Column {Ship_Column} because there is already a ship placed there!")
+                continue
+
+            self.Add_Ship((int(Ship_Row), int(Ship_Column)))
+            self.Numbers_of_Ships += 1
+
+class Computer(Board):
+    Name_Place_Holder: str = "Computer"
+
+    def __init__(self, Amount_of_Rows: int, Amount_of_Columns: int):
+        super().__init__(Amount_of_Rows, Amount_of_Columns)
+
+    def Generate_Ships(self) -> None:
+        All_Coordinates = {
+            (Row_Index, Column_Index)
+
+            for Row_Index in range(self.Number_of_Rows)
+            for Column_Index in range(self.Number_of_Columns)
+        }
+
+        Ship_Locations = set(random.sample(tuple(All_Coordinates), Game_Configuration["Max Ships"])) # AI Usage No. 6. I literally forgot about the random.sample() function. I could've replaced my entire RNG Ship Generation with that one line alone.
+        # random.sample() is basically random.choice() but it returns UNIQUE choices with the amount of times you want. (How did I forget about this function??)
+        self.Numbers_of_Ships = len(Ship_Locations)
+        self.Set_Ship_Locations(Ship_Locations)
+
+        for Coordinate in Ship_Locations:
+            print(f"Row: {Coordinate[0]}, Column: {Coordinate[1]}") # Debugging Purposes
+
+    def Computer_Self_Play(self, Player_Board: Player) -> None:
         Empty_Spots = {
             (Row_Index, Column_Index)
 
@@ -136,7 +162,6 @@ class Board:
             print(f"Computer has chosen Row: {Random_Coordinate[0]} and Column: {Random_Coordinate[1]}. Computer has hit a ship!")
             self.Guessed_Coordinates.update({Random_Coordinate: True})
             Player_Board.Numbers_of_Ships -= 1
-
 
 def Display_Introduction_and_Instructions() -> None:
     print("Welcome to BattleShip! (Python Version)")
@@ -172,18 +197,18 @@ def Display_Introduction_and_Instructions() -> None:
     print("Objective: Destroy your enemy ships before they destroy you. Good luck.")
     print("----------------------------------------")
 
-def Get_Player_Input(Ship_Board: Board) -> tuple[int, int]: # I put it able to return type None for the Menu
+def Get_Player_Input(Player_Board: Player) -> tuple[int, int]:
 
     while True:
         Row = input("Choose a Row: ")
 
-        if Validate_Player_Input(Row, 0, Ship_Board.Number_of_Rows) == True:
+        if Validate_Player_Input(Row, 0, Player_Board.Number_of_Rows) == True:
             break
 
     while True:
         Column = input("Choose a Column: ")
 
-        if Validate_Player_Input(Column, 0, Ship_Board.Number_of_Columns) == True:
+        if Validate_Player_Input(Column, 0, Player_Board.Number_of_Columns) == True:
             break
 
     return (int(Row), int(Column))
@@ -209,7 +234,7 @@ def Validate_Player_Input(Player_Input: str, Min_Limit: int, Max_Limit: int): # 
         print("There are some illegal characters in your input. You can't have any special characters, spaces, or just an empty input.")
         return False
     
-def Handle_Player_Input(Guessed_Coordinates: tuple[int, int], Player_Ship_Board: Board, Enemy_Ship_Board: Board) -> bool:
+def Handle_Player_Input(Guessed_Coordinates: tuple[int, int], Player_Ship_Board: Player, Enemy_Ship_Board: Player | Computer) -> bool:
 
     if Guessed_Coordinates in Player_Ship_Board.Guessed_Coordinates: # AI Usage No. 5, I couldn't figure out how to prevent the player from double guessing without the executor moving onto the opponent's turn
         print(f"You have already guessed Row: {Guessed_Coordinates[0]} and Column: {Guessed_Coordinates[1]}. Guess Again.")
@@ -257,7 +282,7 @@ def Prompt_Player_for_Rows_and_Columns() -> tuple[int, int]:
 
     return (int(Rows), int(Columns))
 
-def Check_for_Winner(Player_Ship_Board: Board, Enemy_Ship_Board: Board) -> bool | None:
+def Check_for_Winner(Player_Ship_Board: Player, Enemy_Ship_Board: Player | Computer) -> bool | None:
     if Enemy_Ship_Board.Numbers_of_Ships <= 0: # Check if the opponent has 0 ships
 
         # The player that has the current turn will win (before the turn switches to the opponent)
@@ -269,8 +294,7 @@ def Check_for_Winner(Player_Ship_Board: Board, Enemy_Ship_Board: Board) -> bool 
             print("Player Two has won!")
             Game_State["Player Two Score"] += 1
 
-        Player_Ship_Board.Print_Ship_Board(Enemy_Ship_Board.Guessed_Coordinates, Show_Answer=True)
-        Enemy_Ship_Board.Print_Ship_Board(Player_Ship_Board.Guessed_Coordinates, Show_Answer=True)
+        Player_Ship_Board.Print_Ship_Board(Enemy_Ship_Board.Guessed_Coordinates, Enemy_Ship_Board.Name_Place_Holder, Show_Answer=True)
         
         print(f"Current Score: {Game_State["Player One Score"]} - {Game_State["Player Two Score"]}")
         
@@ -296,8 +320,8 @@ def Play_BattleShip():
     Game_Mode = Get_Gamemode()
     
     if Game_Mode == "player":
-        Player_One = Board(Rows, Columns, "Player One")
-        Player_Two = Board(Rows, Columns, "Player Two")
+        Player_One = Player(Rows, Columns)
+        Player_Two = Player(Rows, Columns)
 
         Player_One.Place_Ships()
         Player_Two.Place_Ships()
@@ -314,7 +338,7 @@ def Play_BattleShip():
             if Win_Check == True:
                 break
 
-            Player_Two.Print_Ship_Board(Player_One.Guessed_Coordinates, Show_Answer=False)
+            Player_Two.Print_Ship_Board(Player_One.Guessed_Coordinates, Player_Two.Name_Place_Holder, Show_Answer=False)
             Game_State["Current Turn"] = 2 # Now just pass the turn to the opponent
 
             while True:
@@ -327,38 +351,38 @@ def Play_BattleShip():
             if Win_Check == True:
                 break
 
-            Player_One.Print_Ship_Board(Player_Two.Guessed_Coordinates, Show_Answer=False)
+            Player_One.Print_Ship_Board(Player_Two.Guessed_Coordinates, Player_One.Name_Place_Holder, Show_Answer=False)
             Game_State["Current Turn"] = 1
 
     elif Game_Mode == "computer":
-        Player = Board(Rows, Columns, "Player One")
-        Computer = Board(Rows, Columns, "Computer")
+        Human = Player(Rows, Columns)
+        Bot = Computer(Rows, Columns)
 
-        Player.Place_Ships()
-        Computer.Generate_Ships()
+        Human.Place_Ships()
+        Bot.Generate_Ships()
 
         while True:
 
             while True:
-                Player_Coordinates = Get_Player_Input(Player)
-                if Handle_Player_Input(Player_Coordinates, Player, Computer) == True:
+                Player_Coordinates = Get_Player_Input(Human)
+                if Handle_Player_Input(Player_Coordinates, Human, Bot) == True:
                     break
 
-            Win_Check = Check_for_Winner(Player, Computer)
+            Win_Check = Check_for_Winner(Human, Bot)
 
             if Win_Check == True:
                 break
 
-            Computer.Print_Ship_Board(Player.Guessed_Coordinates, Show_Answer=False)
+            Bot.Print_Ship_Board(Human.Guessed_Coordinates, Bot.Name_Place_Holder, Show_Answer=False)
             Game_State["Current Turn"] = 2
 
-            Computer.Computer_Self_Play(Player)
-            Win_Check = Check_for_Winner(Computer, Player)
+            Bot.Computer_Self_Play(Human)
+            Win_Check = Check_for_Winner(Human, Bot)
 
             if Win_Check == True:
                 break
 
-            Player.Print_Ship_Board(Computer.Guessed_Coordinates, Show_Answer=False)
+            Human.Print_Ship_Board(Bot.Guessed_Coordinates, Human.Name_Place_Holder, Show_Answer=False)
             Game_State["Current Turn"] = 1
 
     if Prompt_User_to_Play_Again() == True:
