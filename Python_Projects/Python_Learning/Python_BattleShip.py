@@ -42,8 +42,9 @@ class Board:
         self.__Ship_Locations = New_Ship_Locations
 
     # Add_Ship is meant for the player only
-    def Add_Ship(self, Ship_Coordinates: tuple[int, int]) -> None: # New function to add a ship
-        self.__Ship_Locations.add(Ship_Coordinates)
+    # def Add_Ship(self, Ship_Coordinates: tuple[int, int]) -> None: # New function to add a ship
+    #     self.__Ship_Locations.add(Ship_Coordinates)
+    # Removed the Add_Ship() function and just did a small adjustment on the Players placing their ships
 
     def Remove_Ship(self, Ship_Coordinates: tuple[int, int]) -> None: # New function to remove a ship
         self.__Ship_Locations.remove(Ship_Coordinates)
@@ -99,6 +100,8 @@ class Player(Board):
         super().__init__(Amount_of_Rows, Amount_of_Columns)
 
     def Place_Ships(self) -> None:
+        Ship_Locations: set[tuple[int, int]] = set()
+
         while self.Numbers_of_Ships < Game_Configuration["Max Ships"]:
 
             while True:
@@ -113,14 +116,14 @@ class Player(Board):
                 if Validate_Player_Input(Ship_Column, 0, self.Number_of_Columns) == True:
                     break
 
-            Ship_Locations = self.Get_Ship_Locations()
-
             if (int(Ship_Row), int(Ship_Column)) in Ship_Locations:
                 print(f"Couldn't place Ship {self.Numbers_of_Ships + 1} in Row {Ship_Row} and Column {Ship_Column} because there is already a ship placed there!")
                 continue
 
-            self.Add_Ship((int(Ship_Row), int(Ship_Column)))
+            Ship_Locations.add((int(Ship_Row), int(Ship_Column)))
             self.Numbers_of_Ships += 1
+
+        self.Set_Ship_Locations(Ship_Locations) # Guranteed to have 10 ships with 10 unique coordinates since there are many checks to ensure this
 
 class Computer(Board):
     Name_Place_Holder: str = "Computer"
@@ -233,11 +236,11 @@ def Handle_Player_Input(Guessed_Coordinates: tuple[int, int], Player_Ship_Board:
 
     if not Guessed_Coordinates in Enemy_Ship_Board.Get_Ship_Locations(): # Check if the guessed coordinates matches with an enemy ship
         Player_Ship_Board.Guessed_Coordinates.update({Guessed_Coordinates: False})
-        print(f"Row: {Guessed_Coordinates[0]} and Column: {Guessed_Coordinates[1]}. Miss.")
+        print(f"{Player_Ship_Board.Name_Place_Holder} has guessed Row: {Guessed_Coordinates[0]} and Column: {Guessed_Coordinates[1]}. Miss.")
     else:
         Player_Ship_Board.Guessed_Coordinates.update({Guessed_Coordinates: True})
         Enemy_Ship_Board.Numbers_of_Ships -= 1
-        print(f"Row: {Guessed_Coordinates[0]} and Column: {Guessed_Coordinates[1]}. Hit!")
+        print(f"{Player_Ship_Board.Name_Place_Holder} has guessed Row: {Guessed_Coordinates[0]} and Column: {Guessed_Coordinates[1]}. Hit!")
 
     return True
     
@@ -308,6 +311,10 @@ def Prompt_User_to_Play_Again() -> bool:
         else:
             print(f"Did not recognize {Restart_Choice} as a valid input.")
 
+def Clear_Screen() -> None:
+    for _ in range((1000) + 1):
+        print()
+
 def Play_BattleShip():
     Display_Introduction_and_Instructions()
 
@@ -316,10 +323,18 @@ def Play_BattleShip():
     
     if Game_Mode == "player":
         Player_One = Player(Rows, Columns)
-        Player_Two = Player(Rows, Columns)
+        Player_One.Name_Place_Holder = "Player One"
 
+        Player_Two = Player(Rows, Columns)
+        Player_Two.Name_Place_Holder = "Player Two"
+
+        print("After you place your ships, move the screen to Player Two so they can place their ships")
         Player_One.Place_Ships()
+        Clear_Screen()
+
+        print("After you place your ships, you may flip the screen back to Player One to start playing")
         Player_Two.Place_Ships()
+        Clear_Screen()
 
         while True:
 
