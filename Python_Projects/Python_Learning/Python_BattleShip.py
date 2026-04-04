@@ -362,6 +362,7 @@ def Play_BattleShip(Game_System: Game):
             Win_Check = Game_System.Check_for_Winner(Player_Two, Player_One)
 
             if Win_Check:
+                Game_System.Current_Turn = 1
                 break
 
             Player_One.Print_Ship_Board(Player_Two.Guessed_Coordinates, Player_One.Name_Place_Holder, Show_Answer=False)
@@ -393,6 +394,7 @@ def Play_BattleShip(Game_System: Game):
             Win_Check = Game_System.Check_for_Winner(Bot, Human)
 
             if Win_Check:
+                Game_System.Current_Turn = 1
                 break
 
             Human.Print_Ship_Board(Bot.Guessed_Coordinates, Human.Name_Place_Holder, Show_Answer=False)
