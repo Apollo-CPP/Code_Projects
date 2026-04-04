@@ -49,13 +49,13 @@ class Game:
         while True:
             Row = input("Choose a Row: ")
 
-            if self.Validate_Player_Input(Row, 0, Player_Board.Number_of_Rows) == True:
+            if self.Validate_Player_Input(Row, 0, Player_Board.Number_of_Rows):
                 break
 
         while True:
             Column = input("Choose a Column: ")
 
-            if self.Validate_Player_Input(Column, 0, Player_Board.Number_of_Columns) == True:
+            if self.Validate_Player_Input(Column, 0, Player_Board.Number_of_Columns):
                 break
 
         return (int(Row), int(Column))
@@ -71,7 +71,7 @@ class Game:
         try:
             Converted_Player_Input = int(Player_Input)
             
-            if (Min_Limit <= Converted_Player_Input < Max_Limit) == False: # I put a -1 to subtract 1 because it is for indexing and indexing starts at 0. If I pass in the int 5 for 5 rows, the max index would be 4.
+            if not (Min_Limit <= Converted_Player_Input < Max_Limit): # I put a -1 to subtract 1 because it is for indexing and indexing starts at 0. If I pass in the int 5 for 5 rows, the max index would be 4.
                 print("Your input for rows or columns is out of bounds!")
                 return False
             else:
@@ -118,13 +118,13 @@ class Game:
         while True:
             Rows = input("How many Rows do you want: ").strip()
 
-            if self.Validate_Player_Input(Rows, Game_Configuration["Minimum Rows and Columns"], (Game_Configuration["Maximum Rows and Columns"] + 1)) == True: # Had to put a + 1 here because the Validate_Player_Input() function does not include the Max_Limit number
+            if self.Validate_Player_Input(Rows, Game_Configuration["Minimum Rows and Columns"], (Game_Configuration["Maximum Rows and Columns"] + 1)): # Had to put a + 1 here because the Validate_Player_Input() function does not include the Max_Limit number
                 break
 
         while True:
             Columns = input("How many Columns do you want: ").strip()
 
-            if self.Validate_Player_Input(Columns, Game_Configuration["Minimum Rows and Columns"], (Game_Configuration["Maximum Rows and Columns"] + 1)) == True: # Same thing here too
+            if self.Validate_Player_Input(Columns, Game_Configuration["Minimum Rows and Columns"], (Game_Configuration["Maximum Rows and Columns"] + 1)): # Same thing here too
                 break
 
         return (int(Rows), int(Columns))
@@ -211,18 +211,18 @@ class Board:
     def Retrieve_Board_Symbol(self, Coordinates: tuple[int, int], Enemy_Guessed_Coordinates: dict[tuple[int, int], bool], Show_Answer: bool) -> str:
         Check_If_Enemy_Guessed_The_Coordinates = Enemy_Guessed_Coordinates.get(Coordinates)
 
-        if Show_Answer == True:
+        if Show_Answer:
 
-            if Check_If_Enemy_Guessed_The_Coordinates == None: # The opponent did not guess the coordinates
-                return "!" if (Coordinates in self.__Ship_Locations) == True else "~" # Return "!" if the Coordinates was a ship, return "~" if it was not a ship
+            if Check_If_Enemy_Guessed_The_Coordinates is None: # The opponent did not guess the coordinates
+                return "!" if (Coordinates in self.__Ship_Locations) else "~" # Return "!" if the Coordinates was a ship, return "~" if it was not a ship
             else: # The opponent did guess the coordinates
-                return "X" if Check_If_Enemy_Guessed_The_Coordinates == True else "O" # Return "X" if the Coordinates was a ship, return "O" if it was not a ship
+                return "X" if Check_If_Enemy_Guessed_The_Coordinates else "O" # Return "X" if the Coordinates was a ship, return "O" if it was not a ship
             
         else:
-            if Check_If_Enemy_Guessed_The_Coordinates == None: # The opponent did not guess the coordinates so just return "~"
+            if Check_If_Enemy_Guessed_The_Coordinates is None: # The opponent did not guess the coordinates so just return "~"
                 return "~"
             else: # The opponent did guess the coordinates
-                return "X" if Check_If_Enemy_Guessed_The_Coordinates == True else "O" # Return "X" if it was a ship, return "O" if it was not a ship
+                return "X" if Check_If_Enemy_Guessed_The_Coordinates else "O" # Return "X" if it was a ship, return "O" if it was not a ship
 
     def Print_Ship_Board(self, Enemy_Guessed_Coordinates: dict[tuple[int, int], bool], Board_Name: str, Show_Answer: bool) -> None:
         # print(*(Column_Number for Column_Number in range(len(self.Ship_Board[0]))), sep=" ") # AI Usage No. 2 - I was confused on how to print the elements using a comprehension but while also separating them with a space
@@ -256,13 +256,13 @@ class Player(Board):
             while True:
                 Ship_Row = input(f"Ship {self.Numbers_of_Ships + 1} Row: ").strip() # I have to put a + 1 because you can't start with Ship 0.
 
-                if Game_System.Validate_Player_Input(Ship_Row, 0, self.Number_of_Rows) == True: # Check if the input is less than or greater than 0 and less than 10
+                if Game_System.Validate_Player_Input(Ship_Row, 0, self.Number_of_Rows): # Check if the input is less than or greater than 0 and less than 10
                     break
 
             while True:
                 Ship_Column = input(f"Ship {self.Numbers_of_Ships + 1} Column: ").strip()
 
-                if Game_System.Validate_Player_Input(Ship_Column, 0, self.Number_of_Columns) == True:
+                if Game_System.Validate_Player_Input(Ship_Column, 0, self.Number_of_Columns):
                     break
 
             if (int(Ship_Row), int(Ship_Column)) in Ship_Locations:
@@ -318,30 +318,8 @@ class Computer(Board):
             self.Guessed_Coordinates.update({Random_Coordinate: True})
             Player_Board.Numbers_of_Ships -= 1
 
-def Display_Introduction_and_Instructions() -> None:
-    print("Welcome to BattleShip! (Python Version)")
-    print("Your goal here is to destroy all of the enemy ships before they destroy you.")
-    print(f"There will be {Game_Configuration["Max Ships"]} ships that will be hidden on your side and your opponent's side")
-
-    print("You will be asked to input the Row and Column that you want to fire at")
-    print("If you hit a ship, congratulations, that's -1 ship for the enemy and a hit for you. However if you miss, just hope that the opponent doesn't destroy one of your ships.")
-    print("There are some rules for inputting as well and I have added safe guards to ensure that you don't somehow crash the entire program")
-
-    print("----- RULES FOR INPUTTING -----")
-    print("1. Your input has to be an INTEGER, or a WHOLE NUMBER. No spaces, special characters, or literally just an empty input.")
-    print("2. Your input needs to be within the range of 0 - (Ship Row or Ship Column depending on which input you're putting in for) MINUS 1 because tables start at the index of 0 instead of 1.")
-
-    print("----- SHIP BOARD KEYS -----")
-    print("~ = Unknown (Possible Ship).")
-    print("X = Hit, nice you hit a ship!")
-    print("O = Miss, better luck next time.")
-    print("! (Only shown at the end of the game) = Revealed Ship")
-
-    print("Objective: Destroy your enemy ships before they destroy you. Good luck.")
-    print("----------------------------------------")
-
 def Play_BattleShip(Game_System: Game):
-    Display_Introduction_and_Instructions()
+    Game.Display_Introduction_and_Instructions()
 
     Rows, Columns = Game_System.Prompt_Player_for_Rows_and_Columns()
     Game_Mode = Game_System.Get_Gamemode()
@@ -365,12 +343,12 @@ def Play_BattleShip(Game_System: Game):
 
             while True: # AI Usage No. 5 is also spread here as well with more while True loops
                 Player_One_Coordinates = Game_System.Get_Player_Input(Player_One)
-                if Game_System.Handle_Player_Input(Player_One_Coordinates, Player_One, Player_Two) == True:
+                if Game_System.Handle_Player_Input(Player_One_Coordinates, Player_One, Player_Two):
                     break
 
             Win_Check = Game_System.Check_for_Winner(Player_One, Player_Two) # Pass in the opponent's board, so that the function can check if the opponent has all of their ships destroyed
 
-            if Win_Check == True:
+            if Win_Check:
                 break
 
             Player_Two.Print_Ship_Board(Player_One.Guessed_Coordinates, Player_Two.Name_Place_Holder, Show_Answer=False)
@@ -378,12 +356,12 @@ def Play_BattleShip(Game_System: Game):
 
             while True:
                 Player_Two_Coordinates = Game_System.Get_Player_Input(Player_Two)
-                if Game_System.Handle_Player_Input(Player_Two_Coordinates, Player_Two, Player_One) == True:
+                if Game_System.Handle_Player_Input(Player_Two_Coordinates, Player_Two, Player_One):
                     break
 
             Win_Check = Game_System.Check_for_Winner(Player_Two, Player_One)
 
-            if Win_Check == True:
+            if Win_Check:
                 break
 
             Player_One.Print_Ship_Board(Player_Two.Guessed_Coordinates, Player_One.Name_Place_Holder, Show_Answer=False)
@@ -400,12 +378,12 @@ def Play_BattleShip(Game_System: Game):
 
             while True:
                 Player_Coordinates = Game_System.Get_Player_Input(Human)
-                if Game_System.Handle_Player_Input(Player_Coordinates, Human, Bot) == True:
+                if Game_System.Handle_Player_Input(Player_Coordinates, Human, Bot):
                     break
 
             Win_Check = Game_System.Check_for_Winner(Human, Bot)
 
-            if Win_Check == True:
+            if Win_Check:
                 break
 
             Bot.Print_Ship_Board(Human.Guessed_Coordinates, Bot.Name_Place_Holder, Show_Answer=False)
@@ -414,14 +392,14 @@ def Play_BattleShip(Game_System: Game):
             Bot.Computer_Self_Play(Human)
             Win_Check = Game_System.Check_for_Winner(Bot, Human)
 
-            if Win_Check == True:
+            if Win_Check:
                 break
 
             Human.Print_Ship_Board(Bot.Guessed_Coordinates, Human.Name_Place_Holder, Show_Answer=False)
             Game_System.Current_Turn = 1
 
 Game_System = Game()
-Display_Introduction_and_Instructions()
+Game.Display_Introduction_and_Instructions()
 
 while True: # Main loop to play BattleShip instead of using recursion because it will use more memory
     Play_BattleShip(Game_System)
@@ -434,7 +412,5 @@ while True: # Main loop to play BattleShip instead of using recursion because it
         print("Player Two got 5 points and has won the game!")
         break
 
-    if Game_System.Prompt_User_to_Play_Again() == True:
-        continue
-    else:
+    if not Game_System.Prompt_User_to_Play_Again():
         break
