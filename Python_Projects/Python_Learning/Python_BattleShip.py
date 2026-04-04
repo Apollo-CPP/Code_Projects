@@ -60,7 +60,8 @@ class Game:
 
         return (int(Row), int(Column))
     
-    def Validate_Player_Input(self, Player_Input: str, Min_Limit: int, Max_Limit: int): # AI usage No. 1, Max_Limit parameter suggestion.
+    @staticmethod
+    def Validate_Player_Input(Player_Input: str, Min_Limit: int, Max_Limit: int): # AI usage No. 1, Max_Limit parameter suggestion.
         # The problem was that if the amount of rows and columns were different then I can't tell what the maximum number was that the input could take
         # I could've just added a parameter of Max_Limit and was ashamed as this was a simple and easy solution
 
@@ -81,7 +82,8 @@ class Game:
             print("There are some illegal characters in your input. You can't have any special characters, spaces, or just an empty input.")
             return False
         
-    def Handle_Player_Input(self, Guessed_Coordinates: tuple[int, int], Player_Ship_Board: Player, Enemy_Ship_Board: Player | Computer) -> bool:
+    @staticmethod
+    def Handle_Player_Input(Guessed_Coordinates: tuple[int, int], Player_Ship_Board: Player, Enemy_Ship_Board: Player | Computer) -> bool:
 
         if Guessed_Coordinates in Player_Ship_Board.Guessed_Coordinates: # AI Usage No. 5, I couldn't figure out how to prevent the player from double guessing without the executor moving onto the opponent's turn
             print(f"You have already guessed Row: {Guessed_Coordinates[0]} and Column: {Guessed_Coordinates[1]}. Guess Again.")
@@ -97,7 +99,8 @@ class Game:
 
         return True
     
-    def Get_Gamemode(self) -> str:
+    @staticmethod
+    def Get_Gamemode() -> str:
         while True:
             Game_mode = input("Who do you want to play with? A player or a computer? [Player / Computer]: ").strip().lower()
 
