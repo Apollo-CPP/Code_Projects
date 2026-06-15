@@ -430,3 +430,122 @@ print(Small_Set <= Big_Set)
 Small_Set = {1, 2, 3, 4, 5} # Setting them to be equal to each other
 
 print(Small_Set < Big_Set) # False, it will evaluate to False either way despite being equal
+
+Small_Set.clear()
+Big_Set.clear()
+
+del Small_Set
+del Big_Set
+
+# The last basic data structure that Python offers is the dictionary or in short, just dict.
+# A dictionary works like an actual dictionary, where a word or key has its own definition or value
+# To create a dictionary, use the curly braces or {} or the dict() constructor
+
+My_Dictionary = {}
+Another_Dictionary = dict()
+
+# To initialize a dictionary with values, start with a key (string), separate it with a colon (:) and then input whatever value you want
+
+My_Dictionary = {"yeetus": 420, "yeehaw": True, "meme": 67.69}
+
+# However, initializing a dictionary with values using the dict constructor requires a plain text and then setting it equal to a value
+
+Another_Dictionary = dict(meme = True, boom = "bam", no = 3.14)
+
+print(My_Dictionary)
+print(Another_Dictionary)
+
+# To add values to a dictionary, use the hard brackets, put a key inside of it, and then set the entire thing to a new value
+
+My_Dictionary["what"] = 20.99
+print(My_Dictionary)
+
+# You can also use the update method to add items in a dictionary but it is most practically used for adding in multiple items instead of just one item
+# It takes in multiple keys and values or an iterable as an argument
+
+My_Dictionary.update(woah = "yessir", yeah = "KABOOM")
+print(My_Dictionary)
+
+# To remove a value, there are multiple ways and they are the pop and popitem methods
+# For the pop method, you need to specify the key to remove both key and value from the dictioanry
+
+My_Dictionary.pop("yeetus")
+print(My_Dictionary)
+
+# However, the popitem method removes the last value that was addede into the dictionary
+My_Dictionary.popitem()
+print(My_Dictionary) # It removed the key "yeah" and its value because it was the last thing that was inserted into the dictioanry
+
+# Or an alternativ way to remove an item is by using the del keyword
+
+del Another_Dictionary["no"]
+print(Another_Dictionary)
+
+# To access values in a dictionary, just index by key
+
+print(Another_Dictionary["meme"]) # Prints the value of the key
+
+# However, if you  want specific information from a dictionary, there are the keys, values, and items attributes or properties
+
+print(My_Dictionary.keys())
+print(My_Dictionary.values())
+
+# Items is basically both the keys and their values in a tuple, grouped in a list and then for some reason all of that in another tuple
+
+print(My_Dictionary.items())
+
+# Or you can loop through the keys and values
+
+for key in My_Dictionary.keys():
+    print(key)
+
+for value in My_Dictionary.values():
+    print(value)
+
+for item in My_Dictionary.items():
+    print(item)
+
+# Another way to get values from a dictionary is to use the get method
+
+print(My_Dictionary.get("meme")) # Will attempt to try to find the key meme and return the value then print it
+
+# If the get method fails to find the key then it will return None as a default value
+
+print(My_Dictionary.get("random value")) # Printed None
+
+# Just found this out right now at the time of writing this but apparently you can also use the fromkeys method to also create a dictionary?
+# It takes in an iterable as the first parameter and then a default value as the second one (Value will become None if the second parameter is missing)
+# Returns a new dictionary, doesn't modify the original one)
+
+print(dict.fromkeys(["woah", "YEET", "kachow"], 3.14))
+
+# Also just found this out right now but you can also look up / access values using the setdefault method like the get method but instead it inserts the given key and value if it doesn't exist
+
+My_Dictionary.setdefault("meme")
+print(My_Dictionary) # The key "meme" already exists inside of the dictionary so it will just print it out without any changes
+
+My_Dictionary.setdefault("KACHOW", 100)
+print(My_Dictionary) # Since it doesn't exist, it will automatically insert the key "KACHOW" with the given value 100
+
+# If you want to copy a dictionary then use the copy method
+
+Yet_Another_Dictionary = My_Dictionary.copy()
+print(Yet_Another_Dictionary)
+
+# If you want to clear a dictionary then use the clear method
+
+Yet_Another_Dictionary.clear()
+print(Yet_Another_Dictionary)
+
+del Yet_Another_Dictionary
+
+# There is another way to loop through a dictionary, which is by using the enumerate keyword
+
+for index, key in enumerate(My_Dictionary): # Enumerating just the dictionary by itself will get an index and the key. Note here, dictionaries CANNOT be indexed because they are unhashable
+    print(f"Key: {index}, Value: {key}")
+
+My_Dictionary.clear()
+Another_Dictionary.clear()
+
+del My_Dictionary
+del Another_Dictionary
